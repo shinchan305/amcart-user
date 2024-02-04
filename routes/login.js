@@ -99,4 +99,4 @@ const refreshToken = async function(req, res) {
     });
 }
 
-module.exports = { login, getToken, userInfo, refreshToken }
+module.exports = { getToken, userInfo, refreshToken }
