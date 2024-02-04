@@ -4,7 +4,7 @@ const config = require('./config');
 const axios = require("axios");
 const CognitoIdentityProvider = require('@aws-sdk/client-cognito-identity-provider');
 
-const poolData = config.poolData;
+const poolData = config.auth.poolData;
 AWS.config.update(config.aws_remote_config);
 const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
 const cognitoBaseURL = `https://amcart.auth.${config.aws_remote_config.region}.amazoncognito.com`;
@@ -12,9 +12,9 @@ const cognitoBaseURL = `https://amcart.auth.${config.aws_remote_config.region}.a
 const getToken = function (req, res) {
     const body = {
         grant_type: "authorization_code",
-        client_id: config.poolData.ClientId,
+        client_id: poolData.ClientId,
         code: req.params.code,
-        redirect_uri: "http://localhost:4201"
+        redirect_uri: config.auth.Redirect_URI
     }
 
     axios.post(`${cognitoBaseURL}/oauth2/token`, body, {
@@ -50,7 +50,7 @@ const userInfo = async function (req, res) {
     }).then(function (response) {
         console.log(response);
         res.send({
-            success: true,            
+            success: true,
             userDetails: {
                 email: response.data.email,
                 name: response.data.name
@@ -65,7 +65,7 @@ const userInfo = async function (req, res) {
     })
 }
 
-const refreshToken = async function(req, res) {
+const refreshToken = async function (req, res) {
     if (!req.params.token) {
         res.status(400).send({
             message: "Please provide refresh token"
@@ -75,7 +75,7 @@ const refreshToken = async function(req, res) {
     const client = new CognitoIdentityProvider.CognitoIdentityProvider({ region: config.aws_remote_config.region })
 
     const response = await client.initiateAuth({
-        ClientId: config.poolData.ClientId,
+        ClientId: poolData.ClientId,
         AuthFlow: 'REFRESH_TOKEN_AUTH',
         AuthParameters: {
             REFRESH_TOKEN: req.params.token,
@@ -99,4 +99,26 @@ const refreshToken = async function(req, res) {
     });
 }
 
-module.exports = { getToken, userInfo, refreshToken }
+const signout = function (req, res) {
+    var userData = {
+        Username: req.params.username,
+        Pool: userPool,
+    };
+    
+    var cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
+    console.log(cognitoUser);
+    if (cognitoUser != null) {
+        cognitoUser.signOut();
+        res.send({
+            success: true,
+            message: "User logged out!"
+        })
+    }
+
+    res.status(400).send({
+        success: false,
+        message: "No logged in user!"
+    });
+}
+
+module.exports = { getToken, userInfo, refreshToken, signout }

@@ -27,6 +27,7 @@ app.use('/', indexRouter);
 app.get('/getToken/:code', loginRouter.getToken);
 app.get('/userInfo/:token', loginRouter.userInfo);
 app.get('/refreshToken/:token', loginRouter.refreshToken);
+app.get('/signout/:username', loginRouter.signout);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

@@ -2,13 +2,16 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 module.exports = {
-    aws_remote_config: {
-      accessKeyId: process.env.AWS_ACCESS_ID,
-      secretAccessKey: process.env.AWS_ACCESS_KEY,
-      region: process.env.AWS_REGION,
-    },
+  aws_remote_config: {
+    accessKeyId: process.env.AWS_ACCESS_ID,
+    secretAccessKey: process.env.AWS_ACCESS_KEY,
+    region: process.env.AWS_REGION,
+  },
+  auth: {
+    Redirect_URI: process.env.REDIRECT_URI,
     poolData: {
       UserPoolId: process.env.USER_POOL_ID,
-      ClientId: process.env.CLIENT_ID,
+      ClientId: process.env.CLIENT_ID
     }
+  }
 };
