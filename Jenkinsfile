@@ -5,7 +5,7 @@ pipeline {
     }
     environment {
         REPOSITORY = "public.ecr.aws/z4m1p6s9/amcart-user"
-        IMAGE_NAME = "amcart-search"
+        IMAGE_NAME = "amcart-user"
     }
     stages {
          stage('Build') { 
